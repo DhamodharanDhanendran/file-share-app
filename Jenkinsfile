@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $APP_NAME .'
+                sh 'docker-compose build'
             }
         }
 
@@ -27,7 +27,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh '''
                             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                            docker tag $APP_NAME $DOCKER_USER/$APP_NAME:latest
+                            docker tag file-share-app_app $DOCKER_USER/file-share-app:latest
                             docker push $DOCKER_USER/$APP_NAME:latest
                         '''
                     }
