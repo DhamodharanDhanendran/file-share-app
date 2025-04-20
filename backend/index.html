@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uploaded Files</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 50%;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #eee;
+    }
+    button {
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>Uploaded Files</h2>
+  <table id="filesTable">
+    <thead>
+      <tr>
+        <th>Filename</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function fetchFiles() {
+      try {
+        const res = await fetch("http://192.168.1.5:5000/files");
+        const files = await res.json();
+        const tbody = document.querySelector("#filesTable tbody");
+        tbody.innerHTML = "";
+        files.forEach(filename => {
+          const tr = document.createElement("tr");
+
+          const nameTd = document.createElement("td");
+          nameTd.textContent = filename;
+          tr.appendChild(nameTd);
+
+          const actionTd = document.createElement("td");
+          const downloadBtn = document.createElement("button");
+          downloadBtn.textContent = "Download";
+          downloadBtn.onclick = () => {
+            window.location.href = `http://192.168.1.5:5000/download/${filename}`;
+          };
+          actionTd.appendChild(downloadBtn);
+          tr.appendChild(actionTd);
+
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error("Error loading files:", err);
+      }
+    }
+
+    window.onload = fetchFiles;
+  </script>
+</body>
+</html>
